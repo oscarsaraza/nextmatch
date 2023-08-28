@@ -1,6 +1,3 @@
 {
-  "parser": "babel-eslint",
-  "rules": {
-    "semi": "off"
-  }
+  "extends": "next/core-web-vitals"
 }
