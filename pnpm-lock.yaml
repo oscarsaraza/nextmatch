@@ -32,6 +32,9 @@ devDependencies:
   eslint-plugin-svelte:
     specifier: ^2.30.0
     version: 2.33.0(eslint@8.48.0)(svelte@4.2.0)
+  fauna:
+    specifier: ^1.2.0
+    version: 1.2.0
   postcss:
     specifier: ^8.4.24
     version: 8.4.29
@@ -1253,6 +1256,10 @@ packages:
     resolution: {integrity: sha512-wBrocU2LCXXa+lWBt8RoIRD89Fi8OdABODa/kEnyeyjS5aZO5/GNvI5sEINADqP/h8M29UHTHUb53sUu5Ihqdw==}
     dependencies:
       reusify: 1.0.4
+    dev: true
+
+  /fauna@1.2.0:
+    resolution: {integrity: sha512-YiNVB6uZwXOlVwVzwP3JNEVllPTU/U/in175tuPYZBtrk0ji4XRbxwFyk1CNJfJYFhzNaQV066U6KwhWtCpRdA==}
     dev: true
 
   /file-entry-cache@6.0.1:
