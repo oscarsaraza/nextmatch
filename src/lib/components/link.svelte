@@ -1,14 +1,8 @@
 <script lang="ts">
-  export let href: string
-  export let rel: string
+  export let href: string ='/'
 </script>
 
-<a
-  class="text-emerald-700 border-emerald-700 inline-block p-1 -ml-2 relative"
-  {href}
-  {rel}
-  data-sveltekit-preload-data={rel ? 'off' : 'on'}
->
+<a class="text-emerald-700 border-emerald-700 inline-block p-1 -ml-2 relative" {href} on:click|preventDefault>
   <slot />
 </a>
 
