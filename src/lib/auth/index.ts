@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app'
+import { getFirebaseApp } from '$lib/firebase'
 import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
 
 import { writable } from 'svelte/store'
@@ -8,21 +8,9 @@ type UserInfo = { id: string; email: string | null; name: string | null; picture
 const userStore = writable<UserInfo | null>()
 
 export function userAuth() {
-  const firebaseConfig = {
-    apiKey: 'AIzaSyBz93TU0WJRQHL3Mn4gFzpqsUrbDLLMN_w',
-    authDomain: 'nextmatch-400717.firebaseapp.com',
-    projectId: 'nextmatch-400717',
-    storageBucket: 'nextmatch-400717.appspot.com',
-    messagingSenderId: '1093148100174',
-    appId: '1:1093148100174:web:947528323db142d20ba51f',
-    measurementId: 'G-Q31P5YM8G7',
-  }
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig)
   const provider = new GoogleAuthProvider()
   provider.setDefaultLanguage('es')
-  const auth = getAuth(app)
+  const auth = getAuth(getFirebaseApp())
 
   auth.onAuthStateChanged((user) => {
     if (!user) userStore.set(null)
@@ -64,5 +52,5 @@ export function userAuth() {
     auth.signOut()
   }
 
-  return { login, logout, user: userStore }
+  return { login, logout, user: userStore, currentUser: auth.currentUser }
 }

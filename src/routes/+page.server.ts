@@ -1,11 +1,6 @@
-import { createMatch, getMatches } from '$lib/db'
+import { createMatch } from '$lib/db'
 import type { Actions } from '@sveltejs/kit'
-import type { PageServerLoad } from './$types'
-
-export const load = (async () => {
-  const matches = await getMatches()
-  return { matches }
-}) satisfies PageServerLoad
+import { Timestamp } from 'firebase/firestore'
 
 export const actions = {
   default: async ({ request }) => {
@@ -16,7 +11,7 @@ export const actions = {
     if (!date || !location || !requiredPlayers) return
 
     const match = {
-      datetime: new Date(date),
+      datetime: Timestamp.fromDate(new Date(date)),
       location,
       requiredPlayers: parseInt(requiredPlayers),
     }
