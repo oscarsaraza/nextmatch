@@ -6,10 +6,12 @@
 </script>
 
 <div>
-  {#if $user}
+  {#if $user?.state === 'logged'}
     {$user?.name} <button on:click={logout}>Salir</button>
-  {:else}
+  {:else if $user?.state === 'no-user'}
     Anónimo
+  {:else if $user?.state === 'loading'}
+    Cargando...
   {/if}
   <slot />
 </div>

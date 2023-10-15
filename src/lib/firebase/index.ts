@@ -1,9 +1,11 @@
+import { dev } from '$app/environment'
 import { initializeApp, type FirebaseApp } from 'firebase/app'
+import { connectAuthEmulator, getAuth, type Auth } from 'firebase/auth'
+import { getFirestore, type Firestore, connectFirestoreEmulator } from 'firebase/firestore'
 
-let app: FirebaseApp | null = null
+let app: FirebaseApp
 
 export function getFirebaseApp(): FirebaseApp {
-  // Initialize Firebase
   if (!app) {
     const firebaseConfig = {
       apiKey: 'AIzaSyBz93TU0WJRQHL3Mn4gFzpqsUrbDLLMN_w',
@@ -17,4 +19,24 @@ export function getFirebaseApp(): FirebaseApp {
     app = initializeApp(firebaseConfig)
   }
   return app
+}
+
+let db: Firestore
+
+export function getFirebaseDB() {
+  if (!db) {
+    db = getFirestore(getFirebaseApp())
+    if (dev) connectFirestoreEmulator(db, 'localhost', 8080)
+  }
+  return db
+}
+
+let auth: Auth
+
+export function getFirebaseAuth() {
+  if (!auth) {
+    auth = getAuth(getFirebaseApp())
+    if (dev) connectAuthEmulator(auth, "http://localhost:9099")
+  }
+  return auth
 }

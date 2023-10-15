@@ -1,23 +1,35 @@
-import { dev } from '$app/environment';
-import { getFirebaseApp } from '$lib/firebase'
-import { GoogleAuthProvider, getAuth, signInWithPopup, connectAuthEmulator } from 'firebase/auth'
+import { getFirebaseAuth } from '$lib/firebase'
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 
 import { writable } from 'svelte/store'
 
-type UserInfo = { id: string; email: string | null; name: string | null; picture: string | null }
+type UserInfo = {
+  state: 'loading' | 'no-user'
+} |
+{
+  state: 'logged'
+  id: string
+  email: string | null
+  name: string | null 
+  picture: string | null 
+}
 
-const userStore = writable<UserInfo | null>()
+const userStore = writable<UserInfo>({ state: 'loading' })
 
 export function userAuth() {
+  const auth = getFirebaseAuth()
   const provider = new GoogleAuthProvider()
+  let isReady = false
   provider.setDefaultLanguage('es')
-  const auth = getAuth(getFirebaseApp())
-  if (dev) connectAuthEmulator(auth, "http://localhost:9099")
+
+  auth.authStateReady().then(() => isReady = true)
 
   auth.onAuthStateChanged((user) => {
-    if (!user) userStore.set(null)
+    if (!isReady) userStore.set({ state: 'loading' })
+    if (!user) userStore.set({ state: 'no-user' })
     else
       userStore.set({
+        state: 'logged',
         id: user.uid,
         email: user.email,
         name: user.displayName,
@@ -54,5 +66,5 @@ export function userAuth() {
     auth.signOut()
   }
 
-  return { login, logout, user: userStore, currentUser: auth.currentUser }
+  return { login, logout, user: userStore }
 }
