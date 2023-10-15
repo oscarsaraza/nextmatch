@@ -14,7 +14,7 @@ export function getFirebaseApp(): FirebaseApp {
       appId: '1:1093148100174:web:947528323db142d20ba51f',
       measurementId: 'G-Q31P5YM8G7',
     }
-    return initializeApp(firebaseConfig)
+    app = initializeApp(firebaseConfig)
   }
   return app
 }

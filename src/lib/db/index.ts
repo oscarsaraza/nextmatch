@@ -1,7 +1,9 @@
+import { dev } from '$app/environment'
 import { getFirebaseApp } from '$lib/firebase'
-import { Timestamp, addDoc, collection, getDocs, getFirestore } from 'firebase/firestore'
+import { Timestamp, addDoc, collection, getDocs, getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 
 const db = getFirestore(getFirebaseApp())
+if (dev) connectFirestoreEmulator(db, 'localhost', 9000)
 
 type Match = {
   datetime: Timestamp

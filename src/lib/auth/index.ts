@@ -1,5 +1,6 @@
+import { dev } from '$app/environment';
 import { getFirebaseApp } from '$lib/firebase'
-import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
+import { GoogleAuthProvider, getAuth, signInWithPopup, connectAuthEmulator } from 'firebase/auth'
 
 import { writable } from 'svelte/store'
 
@@ -11,6 +12,7 @@ export function userAuth() {
   const provider = new GoogleAuthProvider()
   provider.setDefaultLanguage('es')
   const auth = getAuth(getFirebaseApp())
+  if (dev) connectAuthEmulator(auth, "http://localhost:9099")
 
   auth.onAuthStateChanged((user) => {
     if (!user) userStore.set(null)
