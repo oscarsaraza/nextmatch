@@ -1,12 +1,13 @@
 import { getFirebaseAuth } from '$lib/firebase'
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
-
 import { writable } from 'svelte/store'
 
 type UserInfo = {
-  state: 'loading' | 'no-user'
+  isReady: boolean
+  state: 'no-user'
 } |
 {
+  isReady: boolean
   state: 'logged'
   id: string
   email: string | null
@@ -14,30 +15,36 @@ type UserInfo = {
   picture: string | null 
 }
 
-const userStore = writable<UserInfo>({ state: 'loading' })
+const userStore = writable<UserInfo>({ isReady: false, state: 'no-user' })
+
+userStore.subscribe((userInfo) => console.log(userInfo))
 
 export function userAuth() {
   const auth = getFirebaseAuth()
   const provider = new GoogleAuthProvider()
-  let isReady = false
   provider.setDefaultLanguage('es')
 
-  auth.authStateReady().then(() => isReady = true)
+  auth.authStateReady().then(() => {
+    userStore.update(state => ({ ...state, isReady: true }))
+  })
 
   auth.onAuthStateChanged((user) => {
-    if (!isReady) userStore.set({ state: 'loading' })
-    if (!user) userStore.set({ state: 'no-user' })
-    else
-      userStore.set({
-        state: 'logged',
-        id: user.uid,
-        email: user.email,
-        name: user.displayName,
-        picture: user.photoURL,
-      })
+    if (!user) userStore.update((state) => ({ 
+      isReady: true, 
+      state: 'no-user'
+    }))
+    else userStore.update(state => ({
+      isReady: true,
+      state: 'logged',
+      id: user.uid,
+      email: user.email,
+      name: user.displayName,
+      picture: user.photoURL,
+    }))
   })
 
   function login() {
+    userStore.update(state => ({ ...state, isReady: false }))
     signInWithPopup(auth, provider)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access the Google API.
@@ -48,6 +55,14 @@ export function userAuth() {
         // IdP data available using getAdditionalUserInfo(result)
         // ...
         // console.log({ token, user })
+        userStore.update(state => ({
+          isReady: true,
+          state: 'logged',
+          id: user.uid,
+          email: user.email,
+          name: user.displayName,
+          picture: user.photoURL,
+        }))
       })
       .catch((error) => {
         // Handle Errors here.
@@ -63,7 +78,8 @@ export function userAuth() {
   }
 
   function logout() {
-    auth.signOut()
+    userStore.update(state => ({ ...state, isReady: false }))
+    auth.signOut().then(() => userStore.update(state => ({ isReady: true, state: 'no-user' })))
   }
 
   return { login, logout, user: userStore }
