@@ -16,6 +16,7 @@
     {:else if $user.state === 'no-user'}
       Iniciar sesión
     {/if}
+    
+    <slot />    
   {/if}
-  <slot />
 </div>

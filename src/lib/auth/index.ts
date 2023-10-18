@@ -17,8 +17,6 @@ type UserInfo = {
 
 const userStore = writable<UserInfo>({ isReady: false, state: 'no-user' })
 
-userStore.subscribe((userInfo) => console.log(userInfo))
-
 export function userAuth() {
   const auth = getFirebaseAuth()
   const provider = new GoogleAuthProvider()
