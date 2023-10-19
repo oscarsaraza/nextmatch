@@ -2,8 +2,20 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    match /matches/{matchId} {
+      allow read;
+      // allow read: if resource.data.createdBy == request.auth.uid;
+      
+      allow create: if 
+        request.resource.data.requiredPlayers is number &&
+        request.resource.data.requiredPlayers >= 3 &&
+        request.resource.data.requiredPlayers <= 30 && 
+        request.resource.data.location.size() > 10 && 
+        request.resource.data.location.size() < 200 &&
+        request.resource.data.createdBy == request.auth.uid;
+    }
     match /{document=**} {
-      allow read, write: if true
+      allow read, write: if false
     }
   }
 }
