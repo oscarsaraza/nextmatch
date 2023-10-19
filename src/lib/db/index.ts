@@ -5,6 +5,7 @@ export type Match = {
   datetime: Timestamp
   requiredPlayers: number
   location: string
+  createdBy: string
 }
 
 const matches = collection(getFirebaseDB(), '/matches')
